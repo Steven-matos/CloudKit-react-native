@@ -1,0 +1,49 @@
+# Source files (not needed in npm package)
+src/
+examples/
+__tests__/
+
+# Development files
+.git/
+.gitignore
+.github/
+.vscode/
+.idea/
+
+# Configuration files
+.babelrc.js
+.eslintrc.js
+jest.config.js
+jest.setup.js
+tsconfig.json
+tsconfig.build.json
+
+# Documentation
+CONTRIBUTING.md
+CHANGELOG.md
+
+# CI/CD
+.github/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# IDE files
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Coverage
+coverage/
+
+# Build artifacts (except lib/)
+dist/
+build/
+*.tgz
