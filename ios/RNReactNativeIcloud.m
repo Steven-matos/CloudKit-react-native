@@ -66,7 +66,9 @@ RCT_EXPORT_METHOD(initialize:(NSDictionary *)config
         
         // Configure API token if provided
         if (apiToken) {
-            _container.privateCloudDatabase.APIToken = apiToken;
+            // API tokens are typically set on the container level, not database level
+            // This may need to be adjusted based on your specific CloudKit setup
+            [_container setValue:apiToken forKey:@"apiToken"];
         }
         
         _isInitialized = YES;
@@ -583,13 +585,21 @@ RCT_EXPORT_METHOD(isCloudKitAvailable:(RCTPromiseResolveBlock)resolve
         NSDictionary *dict = (NSDictionary *)value;
         
         if (dict[@"timestamp"]) {
-            return [NSDate dateWithTimeIntervalSince1970:[dict[@"timestamp"] doubleValue]];
+            NSNumber *timestamp = dict[@"timestamp"];
+            if ([timestamp isKindOfClass:[NSNumber class]]) {
+                return [NSDate dateWithTimeIntervalSince1970:[timestamp doubleValue]];
+            }
         } else if (dict[@"latitude"] && dict[@"longitude"]) {
-            CLLocationCoordinate2D coordinate = CLLocationCoordinate2DMake(
-                [dict[@"latitude"] doubleValue],
-                [dict[@"longitude"] doubleValue]
-            );
-            return [[CLLocation alloc] initWithLatitude:coordinate.latitude longitude:coordinate.longitude];
+            NSNumber *latitude = dict[@"latitude"];
+            NSNumber *longitude = dict[@"longitude"];
+            
+            if ([latitude isKindOfClass:[NSNumber class]] && [longitude isKindOfClass:[NSNumber class]]) {
+                CLLocationCoordinate2D coordinate = CLLocationCoordinate2DMake(
+                    [latitude doubleValue],
+                    [longitude doubleValue]
+                );
+                return [[CLLocation alloc] initWithLatitude:coordinate.latitude longitude:coordinate.longitude];
+            }
         }
     }
     

@@ -8,6 +8,7 @@
 #endif
 
 #import <CloudKit/CloudKit.h>
+#import <CoreLocation/CoreLocation.h>
 
 @interface RNReactNativeIcloud : RCTEventEmitter <RCTBridgeModule>
 

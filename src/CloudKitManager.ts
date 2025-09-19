@@ -52,6 +52,15 @@ export class CloudKitManager {
       throw new Error('Native CloudKit module not available');
     }
 
+    // Validate required configuration
+    if (!config.containerIdentifier) {
+      throw new Error('containerIdentifier is required in CloudKit configuration');
+    }
+
+    if (!config.environment || !['development', 'production'].includes(config.environment)) {
+      throw new Error('environment must be either "development" or "production"');
+    }
+
     this.config = config;
     await RNReactNativeIcloud.initialize(config);
     this.setupEventListeners();
@@ -144,7 +153,9 @@ export class CloudKitManager {
       this.listeners.set(event, []);
     }
 
-    this.listeners.get(event)!.push(listener);
+    const eventListeners = this.listeners.get(event) || [];
+    eventListeners.push(listener);
+    this.listeners.set(event, eventListeners);
     const subscription = this.eventEmitter.addListener(event, listener);
 
     return () => {
@@ -206,10 +217,9 @@ export class CloudKitManager {
    */
   cleanup(): void {
     if (this.eventEmitter) {
+      // Remove all listeners for each event type we're tracking
       this.listeners.forEach((listeners, event) => {
-        listeners.forEach(listener => {
-          this.eventEmitter!.removeAllListeners(event);
-        });
+        this.eventEmitter!.removeAllListeners(event);
       });
       this.listeners.clear();
     }
